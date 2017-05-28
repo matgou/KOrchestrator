@@ -30,8 +30,9 @@ public class WriteAction extends Action {
 	}
 
 	@Override
-	public FlowExecutionContext run(FlowExecutionContext initContext) throws RunActionException {
-		logger.info(this.getFlow().toString() + "=> write");
+	public FlowExecutionContext run(FlowExecutionContext initContext, String args) throws RunActionException {
+		text = args.substring(filename.length()+2);
+		logger.info("Write : file " + filename);
 		logger.debug("Write in file : " + filename + ", text : " + text);
 		initContext.log(this, "Write in file : " + filename + ", text : " + text);
 		try {

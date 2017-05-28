@@ -11,6 +11,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,6 +25,7 @@ import info.kapable.utils.KOrchestrator.domain.FlowExecutionContext;
 
 @KOrchestratorFlowAction("get_json_data")
 public class GetJsonData extends Action {
+	private static final Logger logger = LoggerFactory.getLogger(GetJsonData.class);
 
 	private String urlToRead;
 	public GetJsonData(Flow flow, String cmd) {
@@ -30,8 +34,9 @@ public class GetJsonData extends Action {
 	}
 
 	@Override
-	public FlowExecutionContext run(FlowExecutionContext initContext) throws RunActionException {
+	public FlowExecutionContext run(FlowExecutionContext initContext, String args) throws RunActionException {
 		try {
+			logger.info("Get : " + urlToRead);
 		    StringBuilder result = new StringBuilder();
 			URL url = new URL(urlToRead);
 		    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -58,6 +63,7 @@ public class GetJsonData extends Action {
 		} catch (IOException e) {
 			throw new RunActionException(e);
 		}
+		initContext.log(this, "GET " + urlToRead);
 		return initContext;
 	}
 

@@ -63,7 +63,8 @@ public class Flow extends AbstractEntity {
 	public FlowExecutionContext run() throws RunActionException {
 		FlowExecutionContext ctx = new FlowExecutionContext();
 		for(Action action: this.actions) {
-			ctx = action.run(ctx);
+			String args = action.processAlias(ctx);
+			ctx = action.run(ctx, args);
 			if(this.aliases.get(action.EntityUUID.toString()) != null) {
 				ctx.addAlias(action, this.aliases.get(action.EntityUUID.toString()));
 			}

@@ -18,7 +18,7 @@ public class RunFlow extends Action {
 	}
 
 	@Override
-	public FlowExecutionContext run(FlowExecutionContext initContext) throws RunActionException {
+	public FlowExecutionContext run(FlowExecutionContext initContext, String args) throws RunActionException {
 		FlowExecutionContext ctx = KOrchestrator.inMemoryFlowRepository.run(flowToRun[1]);
 		initContext.merge(ctx);
 		return initContext;

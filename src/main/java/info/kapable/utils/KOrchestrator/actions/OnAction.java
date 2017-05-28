@@ -17,7 +17,7 @@ public class OnAction extends Action {
 	}
 
 	@Override
-	public FlowExecutionContext run(FlowExecutionContext ctx) throws RunActionException {
+	public FlowExecutionContext run(FlowExecutionContext ctx, String args) throws RunActionException {
 		return ctx;
 	}
 
