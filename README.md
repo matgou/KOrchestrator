@@ -5,8 +5,8 @@ API to execute flow from event
 ```sh
 $ mkdir config.d
 $ cat > config.d/example1.flow << EOF
-on time 3am # event trigger
-write "ping" /tmp/trigger.txt # write ping in file /tmp/trigger.txt 
+on time 3am
+write /tmp/trigger.txt ping 
 EOF
-$ java -jar korchestrator.jar config.d
+$ java -jar korchestrator.jar -e "run_flow example1.flow"
 ```

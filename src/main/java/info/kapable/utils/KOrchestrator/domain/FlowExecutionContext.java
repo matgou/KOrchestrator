@@ -25,4 +25,12 @@ public class FlowExecutionContext extends AbstractEntity {
 	public String toString() {
 		return this.contextProperties.toString();
 	}
+	
+	public void store(Action a, String type, String txtToStore) {
+		this.contextProperties.put("action." + a.EntityUUID.toString() + "." + type, txtToStore);
+	}
+
+	public void log(Action a, String txt) {
+		this.store(a, "log", txt);
+	}
 }

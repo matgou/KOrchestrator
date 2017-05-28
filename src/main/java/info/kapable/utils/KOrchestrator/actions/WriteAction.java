@@ -25,14 +25,15 @@ public class WriteAction extends Action {
 	public WriteAction(Flow flow, String cmd) {
 		super(flow, cmd);
 		String[] args = cmd.split(" ");
-		text = args[1];
-		filename = args[2];
+		filename = args[1];
+		text = cmd.substring(cmd.indexOf(" ", args[0].length() + filename.length()));
 	}
 
 	@Override
 	public FlowExecutionContext run(FlowExecutionContext initContext) throws RunActionException {
 		logger.info(this.getFlow().toString() + "=> write");
 		logger.debug("Write in file : " + filename + ", text : " + text);
+		initContext.log(this, "Write in file : " + filename + ", text : " + text);
 		try {
 			Files.write(Paths.get(filename), text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 		} catch (IOException e) {

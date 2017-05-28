@@ -25,6 +25,7 @@ public class LogAction extends Action {
 	public FlowExecutionContext run(FlowExecutionContext ctx) throws RunActionException {
 		String txt = cmd.substring(cmd.indexOf(" "));
 		logger.info("Log : " + txt);
+		ctx.log(this, txt);
 		logger.info(ctx.toString());
 		return ctx;
 	}
