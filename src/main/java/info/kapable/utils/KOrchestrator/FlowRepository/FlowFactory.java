@@ -79,10 +79,20 @@ public class FlowFactory {
 	    
         while((line = reader.readLine()) != null) {
             String instruction = line.substring(0, line.indexOf(" "));
+            
             Class actionClass = getClassFor(instruction);
             if(actionClass != null) {
+            	String postStore = null;
+            	if(line.indexOf(">") > 0) {
+            		postStore = line.substring(line.indexOf(">")+1);
+            		postStore = postStore.replaceAll(" ", "");
+            		line = line.substring(0, line.indexOf(">"));
+                }
             	Action action = (Action) actionClass.getDeclaredConstructor(cArg).newInstance(flow, line);
             	flow.addAction(action);
+            	if(postStore != null) {
+            		flow.addAlias(action, postStore);
+            	}
             } else {
             	throw new IllegalArgumentException("No such KOrchestratorFlowAction for : " + instruction);
             }

@@ -33,4 +33,14 @@ public class FlowExecutionContext extends AbstractEntity {
 	public void log(Action a, String txt) {
 		this.store(a, "log", txt);
 	}
+
+	public void addAlias(Action action, String string) {
+		contextProperties.put("alias." + string, action.EntityUUID.toString());
+	}
+
+	public String getAlias(String key, String type) {
+		String uuid = (String) contextProperties.get("alias." + key);
+		
+		return contextProperties.getProperty("action." + uuid + "." + type);
+	}
 }

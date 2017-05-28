@@ -1,7 +1,9 @@
 package info.kapable.utils.KOrchestrator.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import info.kapable.utils.KOrchestrator.Exception.RunActionException;
@@ -12,9 +14,11 @@ public class Flow extends AbstractEntity {
 	
 	// List of action composing the flow
 	private List<Action> actions;
+	private Map<String, String> aliases;
 	
 	public Flow(String name) {
 		this.setName(name);
+		this.aliases = new HashMap<String, String>();
 		this.EntityUUID = UUID.nameUUIDFromBytes(name.getBytes());
 		
 		this.setActions(new ArrayList<Action>());
@@ -60,6 +64,9 @@ public class Flow extends AbstractEntity {
 		FlowExecutionContext ctx = new FlowExecutionContext();
 		for(Action action: this.actions) {
 			ctx = action.run(ctx);
+			if(this.aliases.get(action.EntityUUID.toString()) != null) {
+				ctx.addAlias(action, this.aliases.get(action.EntityUUID.toString()));
+			}
 		}
 		
 		return ctx;
@@ -67,5 +74,9 @@ public class Flow extends AbstractEntity {
 	
 	public String toString() {
 		return this.EntityUUID.toString();
+	}
+
+	public void addAlias(Action action, String alias) {
+		this.aliases.put(action.EntityUUID.toString(), alias);
 	}
 }
