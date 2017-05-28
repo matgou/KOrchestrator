@@ -56,11 +56,13 @@ public class Flow extends AbstractEntity {
 		this.actions = actions;
 	}
 
-	public void run() throws RunActionException {
+	public FlowExecutionContext run() throws RunActionException {
+		FlowExecutionContext ctx = new FlowExecutionContext();
 		for(Action action: this.actions) {
-			action.run();
+			ctx = action.run(ctx);
 		}
 		
+		return ctx;
 	}
 	
 	public String toString() {

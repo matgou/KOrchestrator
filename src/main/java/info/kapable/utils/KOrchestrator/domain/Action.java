@@ -16,7 +16,7 @@ public abstract class Action extends AbstractEntity {
 		this.EntityUUID = UUID.nameUUIDFromBytes(aString.getBytes());
 	}
 	
-	public abstract void run() throws RunActionException;
+	public abstract FlowExecutionContext run(FlowExecutionContext initContext) throws RunActionException;
 
 	/**
 	 * @return the flow

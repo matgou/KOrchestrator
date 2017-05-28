@@ -40,11 +40,10 @@ public class InMemoryFlowRepository extends AbstractFlowRepository {
 		}
 	}
 
-	public void run(String flowName) throws RunActionException {
+	public FlowExecutionContext run(String flowName) throws RunActionException {
 		for(Flow flow: this.flows) {
 			if(flow.getName().contentEquals(flowName)) {
-				flow.run();
-				return;
+				return flow.run();
 			}
 		}
 		throw new RunActionException("No such flow with name: " + flowName);

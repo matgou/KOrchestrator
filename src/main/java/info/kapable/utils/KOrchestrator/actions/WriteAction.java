@@ -9,6 +9,7 @@ import info.kapable.utils.KOrchestrator.Exception.RunActionException;
 import info.kapable.utils.KOrchestrator.annotations.KOrchestratorFlowAction;
 import info.kapable.utils.KOrchestrator.domain.Action;
 import info.kapable.utils.KOrchestrator.domain.Flow;
+import info.kapable.utils.KOrchestrator.domain.FlowExecutionContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class WriteAction extends Action {
 	}
 
 	@Override
-	public void run() throws RunActionException {
+	public FlowExecutionContext run(FlowExecutionContext initContext) throws RunActionException {
 		logger.info(this.getFlow().toString() + "=> write");
 		logger.debug("Write in file : " + filename + ", text : " + text);
 		try {
@@ -37,6 +38,7 @@ public class WriteAction extends Action {
 		} catch (IOException e) {
 			throw new RunActionException(e);
 		}
+		return initContext;
 	}
 	
 	
