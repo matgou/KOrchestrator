@@ -5,11 +5,45 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Set;
 
+import org.reflections.Reflections;
+
+import com.sun.javafx.collections.MappingChange.Map;
+
+import info.kapable.utils.KOrchestrator.annotations.KOrchestratorFlowAction;
 import info.kapable.utils.KOrchestrator.domain.Action;
 import info.kapable.utils.KOrchestrator.domain.Flow;
 
 public class FlowFactory {
+	private HashMap<String, Class> actionsMap;
+	private static FlowFactory defaultFlowFactory;
+	
+	public static FlowFactory getDefaultFlowFactory() {
+		if(defaultFlowFactory == null) {
+			defaultFlowFactory = new FlowFactory();
+		}
+		return defaultFlowFactory;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private FlowFactory() {
+		this.actionsMap = new HashMap<String, Class>();
+		
+		 Reflections reflections = new Reflections("info.kapable.utils.KOrchestrator");
+
+		 Set<Class<? extends Action>> allClasses = 
+		     reflections.getSubTypesOf(Action.class);
+		 for(Class clazz: allClasses) {
+			if (clazz.isAnnotationPresent(KOrchestratorFlowAction.class)) {
+				 KOrchestratorFlowAction anno = (KOrchestratorFlowAction) clazz.getAnnotation(KOrchestratorFlowAction.class);
+				 
+				 this.actionsMap.put(anno.value(), clazz);
+			}
+		 }
+		 
+	}
 
 	private static String readFile(String file) throws IOException {
 	    BufferedReader reader = new BufferedReader(new FileReader (file));
@@ -29,13 +63,13 @@ public class FlowFactory {
 	    }
 	}
 	
-	public static Flow fromFile(String file) throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public Flow fromFile(String file, String flowName) throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		String cmd = readFile(file);
-		return FlowFactory.fromCmd(cmd, file);
+		return this.fromCmd(cmd, flowName);
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static Flow fromCmd(String cmd, String flowName) throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public Flow fromCmd(String cmd, String flowName) throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 	    String         line = null;
 	    BufferedReader reader = new BufferedReader(new StringReader (cmd));
 	    Flow flow = new Flow(flowName);
@@ -49,6 +83,8 @@ public class FlowFactory {
             if(actionClass != null) {
             	Action action = (Action) actionClass.getDeclaredConstructor(cArg).newInstance(flow, line);
             	flow.addAction(action);
+            } else {
+            	throw new IllegalArgumentException("No such KOrchestratorFlowAction for : " + instruction);
             }
         }
 
@@ -56,12 +92,8 @@ public class FlowFactory {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static Class getClassFor(String instruction) {
-		switch (instruction) {
-			case "write":
-				return info.kapable.utils.KOrchestrator.actions.WriteAction.class;
-		}
-		return null;
+	private Class getClassFor(String instruction) {
+		return this.actionsMap.get(instruction);
 	}
 
 }

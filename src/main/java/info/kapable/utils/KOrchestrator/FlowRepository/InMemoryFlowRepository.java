@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import info.kapable.utils.KOrchestrator.Exception.RunActionException;
 import info.kapable.utils.KOrchestrator.domain.*;
 
 public class InMemoryFlowRepository extends AbstractFlowRepository {
@@ -25,14 +26,28 @@ public class InMemoryFlowRepository extends AbstractFlowRepository {
 			if(!flowFile.contains("flow")) {
 				continue;
 			}
-			this.flows.add(FlowFactory.fromFile(configDirectory.getAbsolutePath() + "/" + flowFile));
+			this.flows.add(FlowFactory.getDefaultFlowFactory().fromFile(configDirectory.getAbsolutePath() + "/" + flowFile, flowFile));
 		}
 	}
 
 	public void runAll() {
 		for(Flow flow: this.flows) {
-			flow.run();
+			try {
+				flow.run();
+			} catch (RunActionException e) {
+				e.printStackTrace();
+			}
 		}
+	}
+
+	public void run(String flowName) throws RunActionException {
+		for(Flow flow: this.flows) {
+			if(flow.getName().contentEquals(flowName)) {
+				flow.run();
+				return;
+			}
+		}
+		throw new RunActionException("No such flow with name: " + flowName);
 	}
 
 }

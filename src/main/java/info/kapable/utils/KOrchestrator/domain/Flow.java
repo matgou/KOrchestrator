@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import info.kapable.utils.KOrchestrator.Exception.RunActionException;
+
 public class Flow extends AbstractEntity {
 	// The flow name (filename without extention.flow)
 	private String name;
@@ -54,10 +56,14 @@ public class Flow extends AbstractEntity {
 		this.actions = actions;
 	}
 
-	public void run() {
+	public void run() throws RunActionException {
 		for(Action action: this.actions) {
 			action.run();
 		}
 		
+	}
+	
+	public String toString() {
+		return this.EntityUUID.toString();
 	}
 }
